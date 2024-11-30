@@ -1,14 +1,13 @@
 import React from 'react';
-import { Row, Col, Card, Form } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { 
   // addSelectedRecipe, 
   addSelectedRecipeWithDetails,
   removeSelectedRecipe } from '../redux/recipesSlice';
-// import { RootState } from '../store'; // Подключите правильный путь до вашего rootReducer
-// import { addSelectedRecipe, removeSelectedRecipe } from '../slices/recipesSlice';
-
+import { RecipeCard } from './RecipeCard';
+  
 interface RecipeListProps {
   recipes: Array<{
     idMeal: string;
@@ -24,36 +23,36 @@ export const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedRecipes = useSelector((state: RootState) => state.recipes.selectedRecipes);
 
-  const handleCheckboxChange = (recipe: any) => {
-    const isSelected = selectedRecipes.some((r) => r.idMeal === recipe.idMeal);
+  const handleAddRecipe = (recipeId: string) => {
+    dispatch(addSelectedRecipeWithDetails(recipeId));
+  };
+
+  const handleRemoveRecipe = (recipeId: string) => {
+    dispatch(removeSelectedRecipe(recipeId));
+  };
+
+  const handleCheckboxChange = (recipeId: string) => {
+    const isSelected = selectedRecipes.some((r) => r.idMeal === recipeId);
     if (isSelected) {
-      dispatch(removeSelectedRecipe(recipe.idMeal));
+      handleRemoveRecipe(recipeId);
     } else {
-      dispatch(addSelectedRecipeWithDetails(recipe.idMeal));
+      handleAddRecipe(recipeId);
     }
   };
 
   return (
-    <Row xs={1} md={3} className="g-4">
+    <Row xs={1} md={3} className='g-4'>
       {recipes.map((recipe) => (
         <Col key={recipe.idMeal}>
-          <Card>
-            <Card.Img variant="top" src={recipe.strMealThumb} />
-            <Card.Body>
-              <Card.Title>{recipe.strMeal}</Card.Title>
-              <Card.Text>
-                Category: {recipe.strCategory}
-                <br />
-                Area: {recipe.strArea}
-              </Card.Text>
-              <Form.Check
-                type="checkbox"
-                label="Select"
-                checked={selectedRecipes.some((r) => r.idMeal === recipe.idMeal)}
-                onChange={() => handleCheckboxChange(recipe)}
-              />
-            </Card.Body>
-          </Card>
+          <Form.Group>
+            <Form.Check
+              type='checkbox'
+              label='Select to favorites'
+              checked={selectedRecipes.some((r) => r.idMeal === recipe.idMeal)}
+              onChange={() => handleCheckboxChange(recipe.idMeal)}
+            />
+            <RecipeCard recipe={recipe} />
+          </Form.Group>
         </Col>
       ))}
     </Row>
