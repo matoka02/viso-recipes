@@ -8,6 +8,8 @@ interface Recipe {
   strCategory: string;
   strArea: string;
   strMealThumb: string;
+  [key: `strIngredient${number}`]: string | undefined; // Allow dynamic ingredient keys
+  [key: `strMeasure${number}`]: string | undefined; // Allow dynamic measure keys
 }
 
 interface RecipeDetails {
