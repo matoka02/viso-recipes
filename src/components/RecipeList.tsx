@@ -10,16 +10,19 @@ interface RecipeListProps {
     strArea: string;
     strMealThumb: string;
   }>;
-  onRecipeClick?: (id: string) => void;
+  // onRecipeClick?: (id: string) => void;
 }
 
-export const RecipeList: React.FC<RecipeListProps> = ({ recipes, onRecipeClick }) => (
+export const RecipeList: React.FC<RecipeListProps> = ({ 
+  recipes, 
+  // onRecipeClick 
+}) => (
   <Row xs={1} md={3} className="g-4">
     {recipes.map((recipe) => (
       <Col key={recipe.idMeal}>
         <RecipeCard
           recipe={recipe}
-          onClick={onRecipeClick ? () => onRecipeClick(recipe.idMeal) : undefined}
+          // onClick={onRecipeClick ? () => onRecipeClick(recipe.idMeal) : undefined}
         />
       </Col>
     ))}

@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Spinner } from 'react-bootstrap';
 
-import { AddDispatch, RootState } from '../redux/store';
+import { AppDispatch, RootState } from '../redux/store';
 import { fetchRecipes, setCurrentPage } from '../redux/recipesSlice';
 import { SearchBar } from '../components/SearchBar';
 import { RecipeList } from '../components/RecipeList';
 import { Pagination } from '../components/Pagination';
 
 const AllRecipesPage: React.FC = () => {
-  const dispatch: AddDispatch=useDispatch();
+  const dispatch: AppDispatch=useDispatch();
   const {recipes, currentPage, isLoading}=useSelector((state:RootState)=>state.recipes);
 
   useEffect(()=>{

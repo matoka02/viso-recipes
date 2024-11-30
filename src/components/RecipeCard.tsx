@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
 
 interface RecipeCardProps {
@@ -12,8 +13,15 @@ interface RecipeCardProps {
   onClick?: () => void;
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => (
-  <Card onClick={onClick} className='cursor-pointer'>
+export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/recipe/${recipe.idMeal}`);
+  };
+
+  return(
+    <Card onClick={handleCardClick} className='cursor-pointer'>
     <Card.Img variant='top' src={recipe.strMealThumb} alt={recipe.strMeal} />
     <Card.Body>
       <Card.Title>{recipe.strMeal}</Card.Title>
@@ -23,4 +31,5 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onClick }) => (
       </Card.Text>
     </Card.Body>
   </Card>
-);
+  )
+};
