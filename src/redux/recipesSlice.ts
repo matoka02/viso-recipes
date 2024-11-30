@@ -28,7 +28,8 @@ interface RecipeState {
   recipes: Recipe[];
   categories: string[];
   selectedCategory: string | null,
-  selectedRecipes: Recipe[];
+  // selectedRecipes: Recipe[];
+  selectedRecipes: RecipeDetails[];
   searchTerm: string;
   currentPage: number;
   isLoading: boolean;
@@ -74,6 +75,25 @@ export const fetchAllCategories = createAsyncThunk(
   }
 );
 
+export const addSelectedRecipeWithDetails = createAsyncThunk<
+  RecipeDetails,
+  string,
+  { state: { recipes: RecipeState } }
+>(
+  'recipes/addSelectedRecipeWithDetails',
+  async (idMeal, { getState }) => {
+    const { recipes } = getState();
+    const existingRecipe = recipes.selectedRecipes.find((r) => r.idMeal === idMeal);
+    if (existingRecipe) {
+      throw new Error('Recipe already selected');
+    }
+    const recipeDetails = await fetchDetailsAPI(idMeal);
+    return recipeDetails;
+  }
+);
+
+
+
 const recipesSlice = createSlice({
   name: 'recipes',
   initialState,
@@ -84,16 +104,26 @@ const recipesSlice = createSlice({
     setCurrentPage(state, action: PayloadAction<number>) {
       state.currentPage = action.payload;
     },
-    addSelectedRecipe(state, action: PayloadAction<Recipe>) {
-      state.selectedRecipes.push(action.payload);
+    // addSelectedRecipe(state, action: PayloadAction<Recipe>) {
+    //   state.selectedRecipes.push(action.payload);
+    // },
+    // removeSelectedRecipe(state, action: PayloadAction<string>) {
+    //   state.selectedRecipes = state.selectedRecipes.filter(
+    //     (recipe) => recipe.idMeal !== action.payload
+    //   );
+    // },
+    setSelectedCategory(state, action: PayloadAction<string | null>) {
+      state.selectedCategory = action.payload;
     },
     removeSelectedRecipe(state, action: PayloadAction<string>) {
       state.selectedRecipes = state.selectedRecipes.filter(
         (recipe) => recipe.idMeal !== action.payload
       );
     },
-    setSelectedCategory(state, action: PayloadAction<string | null>) {
-      state.selectedCategory = action.payload;
+    removeSelectedRecipeById(state, action: PayloadAction<string>) {
+      state.selectedRecipes = state.selectedRecipes.filter(
+        (recipe) => recipe.idMeal !== action.payload
+      );
     },
   },
   extraReducers: (builder) => {
@@ -127,6 +157,13 @@ const recipesSlice = createSlice({
       // Handle fetchAllCategories Thunk
       .addCase(fetchAllCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
+      })
+      // Handle addSelectedRecipeWithDetails Thunk
+      .addCase(addSelectedRecipeWithDetails.fulfilled, (state, action) => {
+        state.selectedRecipes.push(action.payload);
+      })
+      .addCase(addSelectedRecipeWithDetails.rejected, (state, action) => {
+        state.error = action.error.message || 'Failed to add selected recipe';
       });
   },
 })
@@ -134,9 +171,11 @@ const recipesSlice = createSlice({
 export const {
   setSearchTerm,
   setCurrentPage,
-  addSelectedRecipe,
+  // addSelectedRecipe,
+  // removeSelectedRecipe,
+  setSelectedCategory,
   removeSelectedRecipe,
-  setSelectedCategory
+  removeSelectedRecipeById,
 } = recipesSlice.actions;
 
 export default recipesSlice.reducer;
