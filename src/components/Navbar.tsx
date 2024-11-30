@@ -12,7 +12,7 @@ export const Navbar: React.FC = () => (
       <BootstrapNavbar.Collapse id='basic-navbar-nav'>
         <Nav className='ms-auto'>
           <Nav.Link as={Link} to='/' className='text-light fw-semibold me-3'>
-            All Recipes
+            Home
           </Nav.Link>
           <Nav.Link as={Link} to='/selected' className='text-light fw-semibold me-3'>
             Selected Recipes
