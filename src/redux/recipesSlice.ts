@@ -27,6 +27,7 @@ interface RecipeDetails {
 interface RecipeState {
   recipes: Recipe[];
   categories: string[];
+  selectedCategory: string | null,
   selectedRecipes: Recipe[];
   searchTerm: string;
   currentPage: number;
@@ -40,6 +41,7 @@ interface RecipeState {
 const initialState: RecipeState = {
   recipes: [],
   categories: [],
+  selectedCategory: null,
   selectedRecipes: [],
   searchTerm: '',
   currentPage: 1,
@@ -90,6 +92,9 @@ const recipesSlice = createSlice({
         (recipe) => recipe.idMeal !== action.payload
       );
     },
+    setSelectedCategory(state, action: PayloadAction<string | null>) {
+      state.selectedCategory = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -131,6 +136,7 @@ export const {
   setCurrentPage,
   addSelectedRecipe,
   removeSelectedRecipe,
+  setSelectedCategory
 } = recipesSlice.actions;
 
 export default recipesSlice.reducer;
