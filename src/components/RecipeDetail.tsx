@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Container } from 'react-bootstrap';
+import { Card, Table, Container, Button } from 'react-bootstrap';
 
 interface RecipeDetailsProps {
   recipe: {
@@ -18,10 +18,10 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
 
   return (
     <Container>
-      <Card className="my-4">
-        <Card.Img variant="top" src={strMealThumb} alt={strMeal} />
+      <Card className='my-4'>
+        <Card.Img variant='top' src={strMealThumb} alt={strMeal} />
         <Card.Body>
-          <Card.Title className="text-center">{strMeal}</Card.Title>
+          <Card.Title className='text-center'>{strMeal}</Card.Title>
           <Card.Text>
             <strong>Category:</strong> {strCategory} <br />
             <strong>Area:</strong> {strArea}
@@ -31,7 +31,14 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
           </Card.Text>
           {strYoutube && (
             <Card.Text>
-              <strong>Video:</strong> <a href={strYoutube} target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+              <strong>Video:</strong> <Button
+                variant='primary'
+                href={strYoutube}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Watch on YouTube
+              </Button>
             </Card.Text>
           )}
         </Card.Body>
