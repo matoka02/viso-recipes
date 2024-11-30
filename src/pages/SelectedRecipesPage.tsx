@@ -4,10 +4,10 @@ import { RootState } from "../redux/store";
 import { removeSelectedRecipe } from "../redux/recipesSlice";
 import { Card, Button, ListGroup, Container, Row, Col } from "react-bootstrap";
 
-interface Ingredient {
-  name: string;
-  quantity: string;
-}
+// interface Ingredient {
+//   name: string;
+//   quantity: string;
+// }
 
 const SelectedRecipesPage: React.FC = () => {
   const dispatch = useDispatch();
