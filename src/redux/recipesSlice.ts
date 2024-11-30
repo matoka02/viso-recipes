@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { fetchCategories, fetchRecipesBySearch } from '../utils/api';
+import { fetchCategories, fetchRecipesBySearch, fetchRecipeDetails as fetchDetailsAPI } from '../utils/api';
 
 interface Recipe {
   idMeal: string;
@@ -8,6 +8,18 @@ interface Recipe {
   strCategory: string;
   strArea: string;
   strMealThumb: string;
+}
+
+interface RecipeDetails {
+  idMeal: string;
+  strMeal: string;
+  strCategory: string;
+  strArea: string;
+  strInstructions: string;
+  strMealThumb: string;
+  strYoutube: string;
+  // [key: string]: any;
+  [key: string]: string | undefined; 
 }
 
 interface RecipeState {
@@ -18,7 +30,10 @@ interface RecipeState {
   currentPage: number;
   isLoading: boolean;
   error: string | null;
+  // selectedRecipe: Recipe | null;
+  selectedRecipe: RecipeDetails | null;
 }
+
 
 const initialState: RecipeState = {
   recipes: [],
@@ -28,6 +43,7 @@ const initialState: RecipeState = {
   currentPage: 1,
   isLoading: false,
   error: null,
+  selectedRecipe: null,
 };
 
 export const fetchRecipes = createAsyncThunk(
@@ -35,6 +51,14 @@ export const fetchRecipes = createAsyncThunk(
   async (query: string) => {
     const data = await fetchRecipesBySearch(query);
     return data || [];
+  }
+);
+
+export const fetchRecipeDetails = createAsyncThunk<RecipeDetails, string>(
+  'recipes/fetchRecipeDetails',
+  async (id: string) => {
+    const data = await fetchDetailsAPI(id);
+    return data;
   }
 );
 
@@ -67,6 +91,7 @@ const recipesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    // Handle fetchRecipes Thunk
       .addCase(fetchRecipes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -79,6 +104,20 @@ const recipesSlice = createSlice({
         state.error = action.error.message || 'Failed to fetch recipes';
         state.isLoading = false;
       })
+      // Handle fetchRecipeDetails Thunk
+      .addCase(fetchRecipeDetails.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchRecipeDetails.fulfilled, (state, action) => {
+        state.selectedRecipe = action.payload; // <-- Set selectedRecipe
+        state.isLoading = false;
+      })
+      .addCase(fetchRecipeDetails.rejected, (state, action) => {
+        state.error = action.error.message || 'Failed to fetch recipe details';
+        state.isLoading = false;
+      })
+      // Handle fetchAllCategories Thunk
       .addCase(fetchAllCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
       });
