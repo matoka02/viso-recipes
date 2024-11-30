@@ -21,7 +21,7 @@ interface RecipeDetails {
   strMealThumb: string;
   strYoutube: string;
   // [key: string]: any;
-  [key: string]: string | undefined; 
+  [key: string]: string | undefined;
 }
 
 interface RecipeState {
@@ -128,7 +128,7 @@ const recipesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    // Handle fetchRecipes Thunk
+      // Handle fetchRecipes Thunk
       .addCase(fetchRecipes.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -163,7 +163,7 @@ const recipesSlice = createSlice({
         state.selectedRecipes.push(action.payload);
       })
       .addCase(addSelectedRecipeWithDetails.rejected, (state, action) => {
-        state.error = action.error.message || 'Failed to add selected recipe';
+        state.error = action.error?.message || 'Failed to add selected recipe';
       });
   },
 })

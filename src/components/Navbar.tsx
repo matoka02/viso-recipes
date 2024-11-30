@@ -2,19 +2,19 @@ import React from 'react';
 import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const Navbar: React.FC = () => (
-  <BootstrapNavbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
+export const Navbar: React.FC = () => (
+  <BootstrapNavbar bg='dark' variant='dark' expand='lg' className='shadow-sm'>
     <Container>
-      <BootstrapNavbar.Brand as={Link} to="/" className="fw-bold">
+      <BootstrapNavbar.Brand as={Link} to='/' className='fw-bold text-light'>
         Recipe App
       </BootstrapNavbar.Brand>
-      <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
-      <BootstrapNavbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
-          <Nav.Link as={Link} to="/" className="text-light  me-3">
-            All Recipes
+      <BootstrapNavbar.Toggle aria-controls='basic-navbar-nav' />
+      <BootstrapNavbar.Collapse id='basic-navbar-nav'>
+        <Nav className='ms-auto'>
+          <Nav.Link as={Link} to='/' className='text-light fw-semibold me-3'>
+            Home
           </Nav.Link>
-          <Nav.Link as={Link} to="/selected" className="text-light  me-3">
+          <Nav.Link as={Link} to='/selected' className='text-light fw-semibold me-3'>
             Selected Recipes
           </Nav.Link>
         </Nav>
@@ -22,5 +22,3 @@ const Navbar: React.FC = () => (
     </Container>
   </BootstrapNavbar>
 );
-
-export default Navbar;

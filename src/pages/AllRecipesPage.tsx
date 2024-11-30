@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Spinner } from 'react-bootstrap';
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
+
 import { AppDispatch, RootState } from '../redux/store';
 import { fetchRecipes, setCurrentPage } from '../redux/recipesSlice';
 import { SearchBar } from '../components/SearchBar';
@@ -48,12 +49,22 @@ const AllRecipesPage: React.FC = () => {
   );
 
   return (
-    <Container>
-      <h1 className="my-4 text-center">All Recipes</h1>
-      <SearchBar onSearch={handleSearch} />
-      <CategoryFilter onCategoryChange={handleCategoryChange} />
+    <Container fluid className="bg-light min-vh-100 py-4">
+      <Row className="mb-4">
+        <Col>
+          <h1 className="text-center text-primary fw-bold">All Recipes from theMealDB</h1>
+        </Col>
+      </Row>
+      <Row className="mb-4">
+        <Col xs={12} md={6} className="mb-3">
+          <SearchBar onSearch={handleSearch} />
+        </Col>
+        <Col xs={12} md={6}>
+          <CategoryFilter onCategoryChange={handleCategoryChange} />
+        </Col>
+      </Row>
       {isLoading ? (
-        <Spinner animation="border" className="d-block mx-auto my-4" />
+        <Spinner animation="border" className="d-block mx-auto my-4 text-primary" />
       ) : (
         <>
           <RecipeList recipes={paginatedRecipes} />
