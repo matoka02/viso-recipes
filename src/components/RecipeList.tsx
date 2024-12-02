@@ -41,7 +41,7 @@ export const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
   };
 
   return (
-    <Row xs={1} md={3} className='g-4'>
+    <Row xs={1} md={2} className='g-4'>
       {recipes.map((recipe) => (
         <Col key={recipe.idMeal}>
           <Form.Group>

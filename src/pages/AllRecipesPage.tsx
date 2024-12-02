@@ -41,7 +41,8 @@ const AllRecipesPage: React.FC = () => {
     dispatch(setCurrentPage(1)); // Reset to the first page when changing categories
   };
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 2;
+  console.log(filteredRecipes.length);  
   const totalPages = Math.ceil(filteredRecipes.length / itemsPerPage);
   const paginatedRecipes = filteredRecipes.slice(
     (currentPage - 1) * itemsPerPage,
