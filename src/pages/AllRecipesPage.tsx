@@ -42,7 +42,7 @@ const AllRecipesPage: React.FC = () => {
   };
 
   const itemsPerPage = 2;
-  console.log(filteredRecipes.length);  
+  // console.log(filteredRecipes.length);  
   const totalPages = Math.ceil(filteredRecipes.length / itemsPerPage);
   const paginatedRecipes = filteredRecipes.slice(
     (currentPage - 1) * itemsPerPage,
