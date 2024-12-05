@@ -1,17 +1,7 @@
 import React from 'react';
 import { Card, Table, Container, Button } from 'react-bootstrap';
 
-interface RecipeDetailsProps {
-  recipe: {
-    strMeal: string;
-    strCategory: string;
-    strArea: string;
-    strInstructions: string;
-    strMealThumb: string;
-    strYoutube: string;
-    ingredients: Array<{ name: string; measure: string }>;
-  };
-}
+import { RecipeDetailsProps } from '../utils/types';
 
 export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
   const { strMeal, strCategory, strArea, strInstructions, strMealThumb, strYoutube, ingredients } = recipe;

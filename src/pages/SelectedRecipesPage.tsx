@@ -1,16 +1,21 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Row, Col, Card, Alert, Table, Button } from 'react-bootstrap';
 
-import { AppDispatch, RootState } from '../redux/store';
-import { removeSelectedRecipeById } from '../redux/recipesSlice';
+import { Recipe } from '../utils/types';
+
 
 const SelectedRecipesPage: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const selectedRecipes = useSelector((state: RootState) => state.recipes.selectedRecipes);
+  const queryClient = useQueryClient();
+  
+  const { data: selectedRecipes = [] } = useQuery<Recipe[], Error>({
+    queryKey: ['selectedRecipes'],
+    initialData: [],
+  });
 
   const handleRemove = (idMeal: string) => {
-    dispatch(removeSelectedRecipeById(idMeal));
+    const updatedRecipes = selectedRecipes.filter((recipe) => recipe.idMeal !== idMeal);
+    queryClient.setQueryData(['selectedRecipes'], updatedRecipes); 
   };
 
   const aggregatedIngredients = selectedRecipes.reduce((acc, recipe) => {
