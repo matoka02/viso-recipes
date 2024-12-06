@@ -1,22 +1,16 @@
 import React from 'react';
-import { Row, Col, Card, Alert, Table, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Row, Col, Card, Alert, Table, Button, ButtonGroup } from 'react-bootstrap';
 
 import { useSelectedRecipes } from '../hooks/tanstackQuery';
+import { aggregateIngredients } from '../hooks/extractIngredients';
 
 
 const SelectedRecipesPage: React.FC = () => {
+  const navigate = useNavigate();
   const { selectedRecipes, removeSelectedRecipe } = useSelectedRecipes();
 
-  const aggregatedIngredients = selectedRecipes.reduce((acc, recipe) => {
-    for (let i = 1; i <= 20; i++) {
-      const ingredient = recipe[`strIngredient${i}`];
-      const measure = recipe[`strMeasure${i}`];
-      if (ingredient && measure) {
-        acc.push({ ingredient, measure });
-      }
-    }
-    return acc;
-  }, [] as { ingredient: string; measure: string }[]);
+  const aggregatedIngredients = aggregateIngredients(selectedRecipes);
 
   if (selectedRecipes.length === 0) {
     return (
@@ -38,12 +32,20 @@ const SelectedRecipesPage: React.FC = () => {
               <Card.Body className='d-flex flex-column'>
                 <div className='d-flex justify-content-between align-items-center'>
                   <Card.Title>{recipe.strMeal}</Card.Title>
-                  <Button
-                    variant='danger'
-                    onClick={() => removeSelectedRecipe(recipe.idMeal)}
-                  >
-                    Remove
-                  </Button>
+                  <ButtonGroup className="me-2" aria-label="First group">
+                    <Button
+                      variant='primary'
+                      onClick={() => navigate(`/recipe/${recipe.idMeal}`)}
+                    >
+                      Details
+                    </Button>
+                    <Button
+                      variant='danger'
+                      onClick={() => removeSelectedRecipe(recipe.idMeal)}
+                    >
+                      Remove
+                    </Button>
+                  </ButtonGroup>
                 </div>
                 <Card.Img variant='top' src={recipe.strMealThumb} className='mt-4 mb-4' />
                 <Card.Text>{recipe.strInstructions}</Card.Text>
@@ -70,6 +72,7 @@ const SelectedRecipesPage: React.FC = () => {
           ))}
         </tbody>
       </Table>
+      
     </div>
   );
 };
