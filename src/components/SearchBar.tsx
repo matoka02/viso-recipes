@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
+import { useDebounce } from '../hooks/useDebounce';
 
-import { debounce } from '../utils/debounce';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -11,25 +11,22 @@ interface SearchBarProps {
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const debouncedSearch = debounce((query: string) => {
-    onSearch(query);
-  }, 500); 
+  const debouncedSearchTerm = useDebounce(searchTerm, 1500);
+
+  useEffect(() => {
+    if (debouncedSearchTerm.trim()) {
+      onSearch(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, onSearch]);
 
   const handleSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const query = evt.target.value;
-    setSearchTerm(query);
-    debouncedSearch(query);
+    // console.log(`enter: ${evt.target.value}`);
+    setSearchTerm(evt.target.value);
+    // console.log(`start: ${evt.target.value}`);
   };
 
   const handleSearchSubmit = () => {
-    onSearch(searchTerm);
-  };
-
-  const handleKeyPress = (evt: React.KeyboardEvent<HTMLInputElement>) => {
-    if (evt.key === 'Enter') {
-      evt.preventDefault();
-      handleSearchSubmit();
-    }
+    onSearch(searchTerm.trim());
   };
 
   return (
@@ -41,10 +38,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         </InputGroup.Text>
         <Form.Control
           type='text'
-          // placeholder='Search for recipes...'
           value={searchTerm}
           onChange={handleSearchChange}
-          onKeyPress={handleKeyPress}
         />
         <Button variant='primary' onClick={handleSearchSubmit}>
           Search
