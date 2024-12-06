@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Table, Container, Button } from 'react-bootstrap';
 
-import { RecipeDetailsProps } from '../utils/types';
+import { RecipeDetailsProps } from '../types/RecipeDetails.type';
 
 export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
   const { strMeal, strCategory, strArea, strInstructions, strMealThumb, strYoutube, ingredients } = recipe;

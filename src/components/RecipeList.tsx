@@ -2,7 +2,7 @@ import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Row, Col, Form } from 'react-bootstrap';
 
-import { Recipe } from '../utils/types';
+import { Recipe } from '../types/Recipe.type';
 import { RecipeCard } from './RecipeCard';
 
 

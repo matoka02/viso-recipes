@@ -1,21 +1,16 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Button, Container, Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { fetchRecipeDetails } from '../utils/api';
+import { useRecipeDetails } from '../hooks/tanstackQuery';
 import { RecipeDetails } from '../components/RecipeDetail';
-import { RecipeDetailsProps } from '../utils/types';
+
 
 const RecipeDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: recipe, isLoading, error } = useQuery<RecipeDetailsProps['recipe']>({
-    queryKey: ['recipeDetails', id],
-    queryFn: () => fetchRecipeDetails(id!),
-    enabled: !!id,
-  });
+  const { data: recipe, isLoading, error } = useRecipeDetails(id);
 
   const handleBackClick = () => {
     navigate(-1);

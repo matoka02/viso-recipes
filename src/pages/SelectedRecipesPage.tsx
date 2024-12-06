@@ -1,22 +1,11 @@
 import React from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Row, Col, Card, Alert, Table, Button } from 'react-bootstrap';
 
-import { Recipe } from '../utils/types';
+import { useSelectedRecipes } from '../hooks/tanstackQuery';
 
 
 const SelectedRecipesPage: React.FC = () => {
-  const queryClient = useQueryClient();
-  
-  const { data: selectedRecipes = [] } = useQuery<Recipe[], Error>({
-    queryKey: ['selectedRecipes'],
-    initialData: [],
-  });
-
-  const handleRemove = (idMeal: string) => {
-    const updatedRecipes = selectedRecipes.filter((recipe) => recipe.idMeal !== idMeal);
-    queryClient.setQueryData(['selectedRecipes'], updatedRecipes); 
-  };
+  const { selectedRecipes, removeSelectedRecipe } = useSelectedRecipes();
 
   const aggregatedIngredients = selectedRecipes.reduce((acc, recipe) => {
     for (let i = 1; i <= 20; i++) {
@@ -51,7 +40,7 @@ const SelectedRecipesPage: React.FC = () => {
                   <Card.Title>{recipe.strMeal}</Card.Title>
                   <Button
                     variant='danger'
-                    onClick={() => handleRemove(recipe.idMeal)}
+                    onClick={() => removeSelectedRecipe(recipe.idMeal)}
                   >
                     Remove
                   </Button>

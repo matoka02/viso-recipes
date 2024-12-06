@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 
-import { fetchRecipesBySearch } from '../utils/api';
-import { Recipe } from '../utils/types';
+import { Recipe } from '../types/Recipe.type';
+import { useRecipes } from '../hooks/tanstackQuery';
 import { SearchBar } from '../components/SearchBar';
 import { RecipeList } from '../components/RecipeList';
 import { Pagination } from '../components/Pagination';
 import { CategoryFilter } from '../components/CategoryFilter';
+
 
 
 const AllRecipesPage: React.FC = () => {
@@ -15,11 +15,7 @@ const AllRecipesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: recipes = [], isLoading: isLoadingRecipes } = useQuery<Recipe[], Error>({
-    queryKey: ['recipes', searchTerm],
-    queryFn: () => fetchRecipesBySearch(searchTerm),
-    placeholderData: keepPreviousData,
-  } );
+  const { data: recipes = [], isLoading: isLoadingRecipes } = useRecipes(searchTerm);
 
   const filteredRecipes: Recipe[] = Array.isArray(recipes)
     ? selectedCategory
