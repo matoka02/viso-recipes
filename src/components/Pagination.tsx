@@ -1,48 +1,22 @@
 import React from 'react';
 import { Pagination as BootstrapPagination } from 'react-bootstrap';
 
-interface PaginationProps {
-  totalPages: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-}
+import { PaginationProps } from '../types/Pagination.type';
+import { usePagination } from '../hooks/usePagination';
+
 
 export const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPageChange }) => {
-  const getDisplayedPages = (): (number | string)[] => {
-    const pages: (number | string)[] = [];
-
-    if (totalPages <= 10) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 7) {
-        pages.push(...Array.from({ length: 7 }, (_, i) => i + 1));
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (currentPage > 7 && currentPage <= totalPages - 6) {
-        pages.push(1);
-        pages.push('...');
-        pages.push(...Array.from({ length: 5 }, (_, i) => currentPage - 2 + i));
-        pages.push('...');
-        pages.push(totalPages);
-      } else {
-        pages.push(1);
-        pages.push('...');
-        pages.push(...Array.from({ length: 7 }, (_, i) => totalPages - 7 + i + 1));
-      }
-    }
-
-    return pages;
-  };
-
-  const displayedPages = getDisplayedPages();
+  const { displayedPages, goToPreviousPage, goToNextPage } = usePagination({
+    totalPages,
+    currentPage,
+    onPageChange,
+  });
 
   return (
     <BootstrapPagination className="justify-content-center my-3">
       <BootstrapPagination.Prev
-        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-        disabled={currentPage === 1}
+        onClick={goToPreviousPage}
+        disabled={currentPage === 1 || totalPages === 0}
       />
 
       {displayedPages.map((page, index) =>
@@ -60,8 +34,8 @@ export const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage,
       )}
 
       <BootstrapPagination.Next
-        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
-        disabled={currentPage === totalPages}
+        onClick={goToNextPage}
+        disabled={currentPage === totalPages || totalPages === 0}
       />
     </BootstrapPagination>
   );

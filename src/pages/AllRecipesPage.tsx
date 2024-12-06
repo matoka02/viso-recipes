@@ -9,7 +9,6 @@ import { Pagination } from '../components/Pagination';
 import { CategoryFilter } from '../components/CategoryFilter';
 
 
-
 const AllRecipesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -58,16 +57,21 @@ const AllRecipesPage: React.FC = () => {
       </Row>
       {isLoadingRecipes ? (
         <Spinner animation="border" className="d-block mx-auto my-4 text-primary" />
-      ) : (
-        <>
-          <RecipeList recipes={paginatedRecipes} />
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
-        </>
-      )}
+      ) : filteredRecipes.length === 0 ? (
+        <p className="text-center text-muted my-4">
+          No recipes found for the selected category.
+        </p>
+      ) :
+        (
+          <>
+            <RecipeList recipes={paginatedRecipes} />
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </>
+        )}
     </Container>
   );
 };
