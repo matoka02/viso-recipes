@@ -3,7 +3,7 @@ import { Recipe } from '../types/Recipe.type';
 /**
 * Function for aggregating ingredients from an array of recipes
 * @param recipes Array of recipes
-* @returns Array of ingredients with concatenated measure values
+* @returns Array of ingredients with concatenated measure valuesArray of ingredients with concatenated measure values, sorted alphabetically by ingredient
 */
 
 interface AggregatedIngredient {
@@ -13,11 +13,11 @@ interface AggregatedIngredient {
 
 
 export const aggregateIngredients = (recipes: Recipe[]): AggregatedIngredient[] => {
-  return recipes.reduce((acc, recipe) => {
+  const aggregated = recipes.reduce((acc, recipe) => {
     Object.keys(recipe).forEach((key) => {
       if (key.startsWith('strIngredient') && recipe[key as keyof Recipe] !== undefined) {
         const ingredient = recipe[key as keyof Recipe]!;
-        const measureKey = `strMeasure${key.slice(13)}`;
+        const measureKey = `strMeasure${key.slice(13)}`;  // Extract the corresponding measure key
         const measure = recipe[measureKey as keyof Recipe] || '';
 
         if (ingredient.trim() !== '') {
@@ -33,4 +33,6 @@ export const aggregateIngredients = (recipes: Recipe[]): AggregatedIngredient[] 
 
     return acc;
   }, [] as AggregatedIngredient[]);
+
+  return aggregated.sort((a, b) => a.ingredient.localeCompare(b.ingredient));
 }
