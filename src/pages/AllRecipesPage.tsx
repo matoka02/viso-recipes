@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 
 import { Recipe } from '../types/Recipe.type';
@@ -10,9 +11,11 @@ import { CategoryFilter } from '../components/CategoryFilter';
 
 
 const AllRecipesPage: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const searchTerm = searchParams.get('search') || '';
+  const selectedCategory = searchParams.get('category') || null;
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   const { data: recipes = [], isLoading: isLoadingRecipes } = useRecipes(searchTerm);
 
@@ -31,13 +34,27 @@ const AllRecipesPage: React.FC = () => {
   );
 
   const handleSearch = (query: string) => {
-    setSearchTerm(query);
-    setCurrentPage(1); // Reset to the first page
+    setSearchParams({
+      search: query,
+      category: selectedCategory || '',
+      page: '1',  // Reset to the first page
+    })
   };
 
   const handleCategoryChange = (category: string | null) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
+    setSearchParams({
+      search: searchTerm,
+      category: category || '',
+      page: '1',
+    })
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({
+      search: searchTerm,
+      category: selectedCategory || '',
+      page: page.toString(),
+    });
   };
 
   return (
@@ -68,7 +85,7 @@ const AllRecipesPage: React.FC = () => {
             <Pagination
               totalPages={totalPages}
               currentPage={currentPage}
-              onPageChange={setCurrentPage}
+              onPageChange={handlePageChange}
             />
           </>
         )}

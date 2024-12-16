@@ -15,7 +15,7 @@ export const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage,
   return (
     <BootstrapPagination className="justify-content-center my-3">
       <BootstrapPagination.Prev
-        onClick={goToPreviousPage}
+        onClick={() => goToPreviousPage()}
         disabled={currentPage === 1 || totalPages === 0}
       />
 
@@ -34,7 +34,7 @@ export const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage,
       )}
 
       <BootstrapPagination.Next
-        onClick={goToNextPage}
+        onClick={() => goToNextPage()}
         disabled={currentPage === totalPages || totalPages === 0}
       />
     </BootstrapPagination>
