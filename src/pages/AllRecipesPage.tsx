@@ -1,45 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Col, Container, Row, Spinner } from 'react-bootstrap';
 
-import { AppDispatch, RootState } from '../redux/store';
-import { fetchRecipes, setCurrentPage } from '../redux/recipesSlice';
+import { Recipe } from '../types/Recipe.type';
+import { useRecipes } from '../hooks/tanstackQuery';
 import { SearchBar } from '../components/SearchBar';
 import { RecipeList } from '../components/RecipeList';
 import { Pagination } from '../components/Pagination';
 import { CategoryFilter } from '../components/CategoryFilter';
 
+
 const AllRecipesPage: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const { recipes, currentPage, isLoading, selectedCategory } = useSelector(
-    (state: RootState) => state.recipes
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [filteredRecipes, setFilteredRecipes] = useState(recipes);
+  const searchTerm = searchParams.get('search') || '';
+  const selectedCategory = searchParams.get('category') || null;
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
-  useEffect(() => {
-    dispatch(fetchRecipes(''));
-  }, [dispatch]);
+  const { data: recipes = [], isLoading: isLoadingRecipes } = useRecipes(searchTerm);
 
-  useEffect(() => {
-    setFilteredRecipes(
-      selectedCategory
-        ? recipes.filter((recipe) => recipe.strCategory === selectedCategory)
-        : recipes
-    );
-  }, [recipes, selectedCategory]);
-
-  const handleSearch = (query: string) => {
-    dispatch(fetchRecipes(query));
-  };
-
-  const handlePageChange = (page: number) => {
-    dispatch(setCurrentPage(page));
-  };
-
-  const handleCategoryChange = (category: string | null) => {
-    dispatch(setCurrentPage(1)); // Reset to the first page when changing categories
-  };
+  const filteredRecipes: Recipe[] = Array.isArray(recipes)
+    ? selectedCategory
+      ? recipes.filter((recipe) => recipe.strCategory === selectedCategory)
+      : recipes
+    : [];
 
   const itemsPerPage = 2;
   // console.log(filteredRecipes.length);  
@@ -48,6 +32,30 @@ const AllRecipesPage: React.FC = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const handleSearch = (query: string) => {
+    setSearchParams({
+      search: query,
+      category: selectedCategory || '',
+      page: '1',  // Reset to the first page
+    })
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    setSearchParams({
+      search: searchTerm,
+      category: category || '',
+      page: '1',
+    })
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({
+      search: searchTerm,
+      category: selectedCategory || '',
+      page: page.toString(),
+    });
+  };
 
   return (
     <Container fluid className="bg-light min-vh-100 py-4">
@@ -64,18 +72,23 @@ const AllRecipesPage: React.FC = () => {
           <CategoryFilter onCategoryChange={handleCategoryChange} />
         </Col>
       </Row>
-      {isLoading ? (
+      {isLoadingRecipes ? (
         <Spinner animation="border" className="d-block mx-auto my-4 text-primary" />
-      ) : (
-        <>
-          <RecipeList recipes={paginatedRecipes} />
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
+      ) : filteredRecipes.length === 0 ? (
+        <p className="text-center text-muted my-4">
+          No recipes found for the selected category.
+        </p>
+      ) :
+        (
+          <>
+            <RecipeList recipes={paginatedRecipes} />
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </>
+        )}
     </Container>
   );
 };

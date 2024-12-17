@@ -1,56 +1,58 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { fetchRecipeDetails } from '../redux/recipesSlice';
-import { AppDispatch, RootState } from '../redux/store';
+import React from 'react';
 import { Button, Container, Spinner } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { useRecipeDetails } from '../hooks/tanstackQuery';
 import { RecipeDetails } from '../components/RecipeDetail';
+
 
 const RecipeDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const dispatch: AppDispatch = useDispatch();
-  const { selectedRecipe, isLoading } = useSelector((state: RootState) => state.recipes);
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchRecipeDetails(id));
-    }
-  }, [dispatch, id])
+  const { data: recipe, isLoading, error } = useRecipeDetails(id);
 
   const handleBackClick = () => {
-    navigate(-1); 
+    navigate(-1);
   };
+
+  if (isLoading) {
+    return <Spinner animation='border' className='d-block mx-auto my-4' />;
+  }
+
+  if (error) {
+    return <p className='text-center text-danger'>Failed to load recipe details.</p>;
+  }
+
+  if (!recipe) {
+    return <p className='text-center text-muted'>No recipe found.</p>;
+  }
+
+  const ingredients = Object.keys(recipe)
+    .filter((key) => key.startsWith('strIngredient') && recipe[key])
+    .map((key) => ({
+      name: recipe[key]! as string,
+      measure: recipe[`strMeasure${key.slice(-1)}`]! as string,
+    }))
+    .filter((ingredient) => ingredient.name && ingredient.measure);
 
 
   return (
-    <Container className="my-4">
-      <Button variant="secondary" onClick={handleBackClick} className="mb-3">
+    <Container className='my-4'>
+      <Button variant='secondary' onClick={handleBackClick} className='mb-3'>
         Back
       </Button>
-      {isLoading ? (
-        <Spinner animation="border" className="d-block mx-auto" />
-      ) : (
-        selectedRecipe && (
-          <RecipeDetails
-            recipe={{
-              strMeal: selectedRecipe.strMea!,
-              strCategory: selectedRecipe.strCategory!,
-              strArea: selectedRecipe.strArea!,
-              strInstructions: selectedRecipe.strInstructions!,
-              strMealThumb: selectedRecipe.strMealThumb!,
-              strYoutube: selectedRecipe.strYoutube!,
-              ingredients: Object.keys(selectedRecipe)
-                .filter((key) => key.startsWith('strIngredient') && selectedRecipe[key])
-                .map((key) => ({
-                  name: selectedRecipe[key]!,
-                  measure: selectedRecipe[`strMeasure${key.slice(-1)}`]!,
-                }))
-                .filter((ingredient) => ingredient.name && ingredient.measure),
-            }}
-          />
-        )
-      )}
+      <RecipeDetails
+        recipe={{
+          strMeal: recipe.strMeal!,
+          strCategory: recipe.strCategory!,
+          strArea: recipe.strArea!,
+          strInstructions: recipe.strInstructions!,
+          strMealThumb: recipe.strMealThumb!,
+          strYoutube: recipe.strYoutube!,
+          ingredients,
+        }}
+      />
     </Container>
   );
 };

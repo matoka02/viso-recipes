@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import reportWebVitals from './reportWebVitals';
-import { store } from './redux/store';
 import App from './App';
+
+const queryClient = new QueryClient();
+
+/**
+ * ReactQueryDevtools
+ * Set this true if you want the dev tools to default to being open.
+ */
 
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <Provider store={store}>
-    <App/>
-  </Provider>
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
+  </StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
