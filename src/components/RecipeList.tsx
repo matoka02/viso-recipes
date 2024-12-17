@@ -1,7 +1,7 @@
 import React from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Row, Col, Form } from 'react-bootstrap';
 
+import { useRecipesList } from '../hooks/useRecipesList';
 import { Recipe } from '../types/Recipe.type';
 import { RecipeCard } from './RecipeCard';
 
@@ -12,33 +12,7 @@ interface RecipeListProps {
 
 export const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
 
-  const queryClient = useQueryClient();
-
-  const { mutate: toggleRecipe } = useMutation<Recipe[], Error, Recipe>({
-    mutationFn: (recipe: Recipe) => {
-      const selectedRecipes = queryClient.getQueryData<Recipe[]>(['selectedRecipes']) || [];
-      const isSelected = selectedRecipes.some((r) => r.idMeal === recipe.idMeal);
-
-      // Updating the list of favorite recipes
-      const updatedRecipes = isSelected
-        ? selectedRecipes.filter((r) => r.idMeal !== recipe.idMeal)
-        : [...selectedRecipes, recipe];
-
-      // Return a Promise with the updated list
-      return Promise.resolve(updatedRecipes);
-    },
-    onSuccess: (updatedRecipes) => {
-      // Install the updated list into the cache
-      queryClient.setQueryData(['selectedRecipes'], updatedRecipes);
-    },
-  });
-
-  const handleCheckboxChange = (recipe: Recipe) => {
-    toggleRecipe(recipe);
-  }
-
-  const selectedRecipes = queryClient.getQueryData<Recipe[]>(['selectedRecipes']) || [];
-
+  const { selectedRecipes, handleCheckboxChange } = useRecipesList();
 
   return (
     <Row xs={1} md={2} className='g-4'>
